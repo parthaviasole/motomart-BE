@@ -1,0 +1,6 @@
+@motomart_BE_HostAddress = http://localhost:5237
+
+GET {{motomart_BE_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
