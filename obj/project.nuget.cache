@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "oRLffjU08jU=",
+  "dgSpecHash": "IXfGV1gO8Ak=",
   "success": true,
-  "projectFilePath": "C:\\Motomart\\motomart-be\\motomart-BE.csproj",
+  "projectFilePath": "C:\\Motomart\\motomart-BE\\motomart-BE.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\lenovo\\.nuget\\packages\\bcrypt.net-next\\4.1.0\\bcrypt.net-next.4.1.0.nupkg.sha512",
     "C:\\Users\\lenovo\\.nuget\\packages\\bouncycastle.cryptography\\2.6.2\\bouncycastle.cryptography.2.6.2.nupkg.sha512",

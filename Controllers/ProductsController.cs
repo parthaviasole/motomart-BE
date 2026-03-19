@@ -69,9 +69,25 @@ namespace motomart_BE.Controllers
             return CreatedAtAction(nameof(GetProduct), new { id = newProduct.Id }, newProduct);
         }
 
+        [HttpPost("{id}/upload-image")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UploadProductImage(int id, [FromForm] IFormFile file)
+        {
+            if (file == null || file.Length == 0) return BadRequest("No file uploaded.");
+            
+            var product = await _productService.GetProduct(id);
+            if (product == null) return NotFound("Product not found.");
+
+            var url = await _fileService.UploadFile(file, "product-images");
+            product.ImageUrl = url;
+            await _productService.UpdateProduct(product);
+
+            return Ok(new { url });
+        }
+
         [HttpPost("upload-image")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UploadImage(IFormFile file)
+        public async Task<IActionResult> UploadImage([FromForm] IFormFile file)
         {
             if (file == null || file.Length == 0) return BadRequest("No file uploaded.");
             var url = await _fileService.UploadFile(file, "product-images");
