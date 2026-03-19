@@ -101,7 +101,7 @@ namespace motomart_BE.Services
                 {
                     var product = new Product
                     {
-                        Type = Enum.Parse<ProductType>(row.Cell(1).GetString()),
+                        Type = row.Cell(1).GetString(),
                         Name = row.Cell(2).GetString(),
                         Details = row.Cell(3).GetString(),
                         Price = row.Cell(4).GetValue<decimal>(),

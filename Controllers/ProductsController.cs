@@ -33,16 +33,17 @@ namespace motomart_BE.Controllers
         {
             var products = await _productService.GetProducts(pageNumber, pageSize, searchTerm, name, type, minPrice, maxPrice);
             
-            Response.Headers.Append("X-Pagination", System.Text.Json.JsonSerializer.Serialize(new {
-                products.CurrentPage,
-                products.TotalPages,
-                products.PageSize,
-                products.TotalCount,
-                products.HasPrevious,
-                products.HasNext
-            }));
+            var result = new {
+                items = products,
+                currentPage = products.CurrentPage,
+                totalPages = products.TotalPages,
+                pageSize = products.PageSize,
+                totalCount = products.TotalCount,
+                hasPrevious = products.HasPrevious,
+                hasNext = products.HasNext
+            };
 
-            return Ok(products);
+            return Ok(result);
         }
 
         [HttpGet("types")]
