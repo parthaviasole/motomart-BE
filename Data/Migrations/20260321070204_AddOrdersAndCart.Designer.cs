@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using motomart_BE.Data;
@@ -11,9 +12,11 @@ using motomart_BE.Data;
 namespace motomart_BE.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260321070204_AddOrdersAndCart")]
+    partial class AddOrdersAndCart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,7 +95,7 @@ namespace motomart_BE.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("moto_cart_items", (string)null);
+                    b.ToTable("cart_items", (string)null);
                 });
 
             modelBuilder.Entity("motomart_BE.Models.Order", b =>
@@ -138,7 +141,7 @@ namespace motomart_BE.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("moto_orders", (string)null);
+                    b.ToTable("orders", (string)null);
                 });
 
             modelBuilder.Entity("motomart_BE.Models.OrderItem", b =>
@@ -170,7 +173,7 @@ namespace motomart_BE.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("moto_order_items", (string)null);
+                    b.ToTable("order_items", (string)null);
                 });
 
             modelBuilder.Entity("motomart_BE.Models.Product", b =>
