@@ -25,7 +25,11 @@ namespace motomart_BE.Services
 
             if (!string.IsNullOrEmpty(searchTerm))
             {
-                query = query.Where(p => p.Name.Contains(searchTerm) || (p.Details != null && p.Details.Contains(searchTerm)));
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(p => 
+                    p.Name.ToLower().Contains(searchTerm) || 
+                    p.Type.ToLower().Contains(searchTerm) || 
+                    (p.Details != null && p.Details.ToLower().Contains(searchTerm)));
             }
 
             if (!string.IsNullOrEmpty(name))
