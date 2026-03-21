@@ -60,6 +60,18 @@ namespace motomart_BE.Services
                 .ToListAsync();
         }
 
+        public async Task<object> GetProductTypesSummary()
+        {
+            return await _context.Products
+                .GroupBy(p => p.Type)
+                .Select(g => new {
+                    Type = g.Key,
+                    Count = g.Count()
+                })
+                .OrderBy(t => t.Type)
+                .ToListAsync();
+        }
+
         public async Task<Product> GetProduct(int id)
         {
             return await _context.Products.FindAsync(id);

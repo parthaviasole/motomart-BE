@@ -53,6 +53,13 @@ namespace motomart_BE.Controllers
             return Ok(types);
         }
 
+        [HttpGet("types/summary")]
+        public async Task<IActionResult> GetProductTypesSummary()
+        {
+            var summary = await _productService.GetProductTypesSummary();
+            return Ok(summary);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)
         {

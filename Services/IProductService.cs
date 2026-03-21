@@ -10,6 +10,7 @@ namespace motomart_BE.Services
     {
         Task<PagedList<Product>> GetProducts(int pageNumber, int pageSize, string? searchTerm = null, string? name = null, string? type = null, decimal? minPrice = null, decimal? maxPrice = null);
         Task<List<string>> GetProductTypes();
+        Task<object> GetProductTypesSummary();
         Task<Product> GetProduct(int id);
         Task<Product> CreateProduct(Product product);
         Task<Product> UpdateProduct(Product product);
