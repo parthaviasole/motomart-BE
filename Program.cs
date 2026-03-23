@@ -46,6 +46,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IFileService, SupabaseFileService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IJwtHelper, JwtHelper>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 // JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

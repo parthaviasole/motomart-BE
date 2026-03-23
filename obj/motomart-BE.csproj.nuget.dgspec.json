@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Motomart\\motomart-be\\motomart-BE.csproj": {}
+    "C:\\Motomart\\motomart-BE\\motomart-BE.csproj": {}
   },
   "projects": {
-    "C:\\Motomart\\motomart-be\\motomart-BE.csproj": {
+    "C:\\Motomart\\motomart-BE\\motomart-BE.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Motomart\\motomart-be\\motomart-BE.csproj",
+        "projectUniqueName": "C:\\Motomart\\motomart-BE\\motomart-BE.csproj",
         "projectName": "motomart-BE",
-        "projectPath": "C:\\Motomart\\motomart-be\\motomart-BE.csproj",
+        "projectPath": "C:\\Motomart\\motomart-BE\\motomart-BE.csproj",
         "packagesPath": "C:\\Users\\lenovo\\.nuget\\packages\\",
-        "outputPath": "C:\\Motomart\\motomart-be\\obj\\",
+        "outputPath": "C:\\Motomart\\motomart-BE\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\lenovo\\AppData\\Roaming\\NuGet\\NuGet.Config"
