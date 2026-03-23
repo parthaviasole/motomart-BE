@@ -37,18 +37,28 @@ namespace motomart_BE.Controllers
         }
 
         [HttpGet("user")]
-        public async Task<IActionResult> GetUserOrders([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetUserOrders(
+            [FromQuery] int pageNumber = 1, 
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? searchTerm = null,
+            [FromQuery] DateTime? date = null,
+            [FromQuery] string? status = null)
         {
             var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new Exception("User not authenticated"));
-            var orders = await _orderService.GetUserOrdersAsync(userId, pageNumber, pageSize);
+            var orders = await _orderService.GetUserOrdersAsync(userId, pageNumber, pageSize, searchTerm, date, status);
             return Ok(orders);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllOrders([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAllOrders(
+            [FromQuery] int pageNumber = 1, 
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? searchTerm = null,
+            [FromQuery] DateTime? date = null,
+            [FromQuery] string? status = null)
         {
             // Add Admin check if needed
-            var orders = await _orderService.GetAllOrdersAsync(pageNumber, pageSize);
+            var orders = await _orderService.GetAllOrdersAsync(pageNumber, pageSize, searchTerm, date, status);
             return Ok(orders);
         }
 

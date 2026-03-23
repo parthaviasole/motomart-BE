@@ -90,14 +90,37 @@ namespace motomart_BE.Services
             return order;
         }
 
-        public async Task<PagedResult<Order>> GetUserOrdersAsync(Guid userId, int pageNumber, int pageSize)
+        public async Task<PagedResult<Order>> GetUserOrdersAsync(Guid userId, int pageNumber, int pageSize, string? searchTerm = null, DateTime? date = null, string? status = null)
         {
             var query = _context.Orders
                 .Include(o => o.Address)
                 .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Product)
                 .Where(o => o.UserId == userId)
-                .OrderByDescending(o => o.CreatedAt);
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(o => o.Id.ToString().Contains(searchTerm));
+            }
+
+            if (date.HasValue)
+            {
+                var startDate = date.Value.Date;
+                var endDate = startDate.AddDays(1);
+                query = query.Where(o => o.CreatedAt >= startDate && o.CreatedAt < endDate);
+            }
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                var statuses = status.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                if (statuses.Length > 0)
+                {
+                    query = query.Where(o => statuses.Contains(o.Status));
+                }
+            }
+
+            query = query.OrderByDescending(o => o.CreatedAt);
 
             var totalCount = await query.CountAsync();
             var items = await query
@@ -108,14 +131,37 @@ namespace motomart_BE.Services
             return new PagedResult<Order>(items, totalCount, pageNumber, pageSize);
         }
 
-        public async Task<PagedResult<Order>> GetAllOrdersAsync(int pageNumber, int pageSize)
+        public async Task<PagedResult<Order>> GetAllOrdersAsync(int pageNumber, int pageSize, string? searchTerm = null, DateTime? date = null, string? status = null)
         {
             var query = _context.Orders
                 .Include(o => o.User)
                 .Include(o => o.Address)
                 .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Product)
-                .OrderByDescending(o => o.CreatedAt);
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(o => o.Id.ToString().Contains(searchTerm));
+            }
+
+            if (date.HasValue)
+            {
+                var startDate = date.Value.Date;
+                var endDate = startDate.AddDays(1);
+                query = query.Where(o => o.CreatedAt >= startDate && o.CreatedAt < endDate);
+            }
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                var statuses = status.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                if (statuses.Length > 0)
+                {
+                    query = query.Where(o => statuses.Contains(o.Status));
+                }
+            }
+
+            query = query.OrderByDescending(o => o.CreatedAt);
 
             var totalCount = await query.CountAsync();
             var items = await query
