@@ -107,7 +107,7 @@ namespace motomart_BE.Controllers
         {
             if (file == null || file.Length == 0) return BadRequest("No file uploaded.");
             using var stream = file.OpenReadStream();
-            var products = await _productService.ImportFromExcel(stream);
+            var products = await _productService.ImportProducts(stream, file.FileName);
             return Ok(products);
         }
 

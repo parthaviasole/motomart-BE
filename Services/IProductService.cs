@@ -15,6 +15,6 @@ namespace motomart_BE.Services
         Task<Product> CreateProduct(Product product);
         Task<Product> UpdateProduct(Product product);
         Task DeleteProduct(int id);
-        Task<List<Product>> ImportFromExcel(Stream excelStream);
+        Task<List<Product>> ImportProducts(Stream stream, string fileName);
     }
 }

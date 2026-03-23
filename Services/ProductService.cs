@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System;
 using System.Threading.Tasks;
 using ClosedXML.Excel;
+using Npgsql;
 
 namespace motomart_BE.Services
 {
@@ -105,37 +107,122 @@ namespace motomart_BE.Services
             }
         }
 
-        public async Task<List<Product>> ImportFromExcel(Stream excelStream)
+        public async Task<List<Product>> ImportProducts(Stream stream, string fileName)
         {
-            var products = new List<Product>();
-            using (var workbook = new XLWorkbook(excelStream))
-            {
-                var worksheet = workbook.Worksheets.First();
-                var rows = worksheet.RowsUsed().Skip(1); // Skip header
+            var importedProducts = new List<Product>();
+            var extension = Path.GetExtension(fileName).ToLower();
 
-                foreach (var row in rows)
+            if (extension == ".csv")
+            {
+                using var reader = new StreamReader(stream);
+                var header = await reader.ReadLineAsync(); // Skip header
+                while (!reader.EndOfStream)
                 {
+                    var line = await reader.ReadLineAsync();
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+
+                    var values = line.Split(',');
+                    if (values.Length < 6) continue;
+
                     var product = new Product
                     {
-                        Type = row.Cell(1).GetString(),
-                        Name = row.Cell(2).GetString(),
-                        Details = row.Cell(3).GetString(),
-                        Price = row.Cell(4).GetValue<decimal>(),
-                        Quantity = row.Cell(5).GetValue<int>(),
-                        ImageUrl = row.Cell(6).GetString(),
+                        Type = values[0].Trim(),
+                        Name = values[1].Trim(),
+                        Details = values[2].Trim(),
+                        Price = decimal.TryParse(values[3], out var p) ? p : 0,
+                        Quantity = int.TryParse(values[4], out var q) ? q : 0,
+                        ImageUrl = values[5].Trim(),
                         CreatedAt = DateTime.UtcNow
                     };
-                    products.Add(product);
+                    importedProducts.Add(product);
+                }
+            }
+            else // Assume Excel (.xlsx, .xls)
+            {
+                using (var workbook = new XLWorkbook(stream))
+                {
+                    var worksheet = workbook.Worksheets.First();
+                    var rows = worksheet.RowsUsed().Skip(1); // Skip header
+
+                    foreach (var row in rows)
+                    {
+                        var product = new Product
+                        {
+                            Type = row.Cell(1).GetString().Trim(),
+                            Name = row.Cell(2).GetString().Trim(),
+                            Details = row.Cell(3).GetString().Trim(),
+                            Price = row.Cell(4).GetValue<decimal>(),
+                            Quantity = row.Cell(5).GetValue<int>(),
+                            ImageUrl = row.Cell(6).GetString().Trim(),
+                            CreatedAt = DateTime.UtcNow
+                        };
+                        importedProducts.Add(product);
+                    }
                 }
             }
 
-            if (products.Any())
+            if (importedProducts.Any())
             {
-                _context.Products.AddRange(products);
-                await _context.SaveChangesAsync();
+                // Sync sequence first to be safe
+                try
+                {
+                    await _context.Database.ExecuteSqlRawAsync("SELECT setval(pg_get_serial_sequence('products', 'Id'), COALESCE((SELECT MAX(\"Id\") FROM products), 0) + 1, false);");
+                }
+                catch { /* Ignore if sequence sync fails initially */ }
+
+                foreach (var importedProduct in importedProducts)
+                {
+                    var existingProduct = await _context.Products
+                        .FirstOrDefaultAsync(p => p.Name.ToLower() == importedProduct.Name.ToLower() && p.Type.ToLower() == importedProduct.Type.ToLower());
+
+                    if (existingProduct != null)
+                    {
+                        existingProduct.Details = importedProduct.Details;
+                        existingProduct.Price = importedProduct.Price;
+                        existingProduct.Quantity = importedProduct.Quantity;
+                        existingProduct.ImageUrl = importedProduct.ImageUrl;
+                    }
+                    else
+                    {
+                        _context.Products.Add(importedProduct);
+                    }
+                }
+
+                try 
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx && pgEx.SqlState == "23505")
+                {
+                    // If we still get a PK violation, clear the tracker and try a sequence sync + retry
+                    _context.ChangeTracker.Clear();
+                    
+                    // Force sequence sync
+                    await _context.Database.ExecuteSqlRawAsync("SELECT setval(pg_get_serial_sequence('products', 'Id'), COALESCE((SELECT MAX(\"Id\") FROM products), 0) + 1, false);");
+                    
+                    // Re-run the upsert logic after clearing tracker
+                    foreach (var importedProduct in importedProducts)
+                    {
+                        var existingProduct = await _context.Products
+                            .FirstOrDefaultAsync(p => p.Name.ToLower() == importedProduct.Name.ToLower() && p.Type.ToLower() == importedProduct.Type.ToLower());
+
+                        if (existingProduct != null)
+                        {
+                            existingProduct.Details = importedProduct.Details;
+                            existingProduct.Price = importedProduct.Price;
+                            existingProduct.Quantity = importedProduct.Quantity;
+                            existingProduct.ImageUrl = importedProduct.ImageUrl;
+                        }
+                        else
+                        {
+                            _context.Products.Add(importedProduct);
+                        }
+                    }
+                    await _context.SaveChangesAsync();
+                }
             }
 
-            return products;
+            return importedProducts;
         }
     }
 }
