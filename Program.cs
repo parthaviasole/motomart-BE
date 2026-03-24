@@ -7,6 +7,7 @@ using motomart_BE.Services;
 using Scalar.AspNetCore;
 using Supabase;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,14 +28,25 @@ builder.Services.AddScoped<Supabase.Client>(_ =>
     }));
 
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 
 // Dependency Injection
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IFileService, SupabaseFileService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IJwtHelper, JwtHelper>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 // JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
