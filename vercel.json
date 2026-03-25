@@ -1,15 +1,8 @@
 {
-  "version": 2,
   "builds": [
     {
       "src": "motomart-BE.csproj",
-      "use": "vercel-dotnet@2.2.0"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "motomart-BE.csproj"
+      "use": "vercel-dotnet"
     }
   ]
 }
