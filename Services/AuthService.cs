@@ -70,6 +70,7 @@ namespace motomart_BE.Services
                 return new AuthResponseDto
                 {
                     Token = _jwtHelper.GenerateToken(user),
+                    Id = user.Id,
                     Name = user.Name,
                     Email = user.Email,
                     Role = user.Role
@@ -105,6 +106,7 @@ namespace motomart_BE.Services
                 return new AuthResponseDto
                 {
                     Token = _jwtHelper.GenerateToken(user),
+                    Id = user.Id,
                     Name = user.Name,
                     Email = user.Email,
                     Role = user.Role

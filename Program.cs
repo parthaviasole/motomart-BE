@@ -4,7 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using motomart_BE.Data;
 using motomart_BE.Helpers;
 using motomart_BE.Services;
-using Scalar.AspNetCore;
 using Supabase;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -82,7 +81,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.MapScalarApiReference();
 }
 
 app.Use(async (context, next) =>

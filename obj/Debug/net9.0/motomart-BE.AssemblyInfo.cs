@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("motomart-BE")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+634fe9ca14044ff17ceaab541cbd7a3f708f3691")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4d3734fd53cbe6e47e28efafab498c3565371677")]
 [assembly: System.Reflection.AssemblyProductAttribute("motomart-BE")]
 [assembly: System.Reflection.AssemblyTitleAttribute("motomart-BE")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
