@@ -15,7 +15,8 @@ namespace motomart_BE.Services
             _emailService = emailService;
         }
 
-        public async Task<Order> CreateOrderAsync(Guid userId, Guid addressId, string paymentType, List<CartItemDto> items)
+        public async Task<Order> CreateOrderAsync(Guid userId, Guid addressId, string paymentType, List<CartItemDto> items, 
+            string? razorpayOrderId = null, string? razorpayPaymentId = null, string? razorpaySignature = null)
         {
             Console.WriteLine($"Creating order for User: {userId}, Address: {addressId}, Payment: {paymentType}");
             
@@ -57,8 +58,12 @@ namespace motomart_BE.Services
                 UserId = userId,
                 AddressId = addressId,
                 TotalAmount = totalAmount,
-                Status = "Pending",
+                Status = paymentType == "UPI" ? "Confirmed" : "Pending",
                 PaymentType = paymentType,
+                RazorpayOrderId = razorpayOrderId,
+                RazorpayPaymentId = razorpayPaymentId,
+                RazorpaySignature = razorpaySignature,
+                PaymentStatus = paymentType == "UPI" ? "Paid" : "Pending",
                 CreatedAt = DateTime.UtcNow,
                 OrderItems = orderItems
             };

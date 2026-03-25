@@ -19,19 +19,19 @@ namespace motomart_BE.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto dto)
         {
-            var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new Exception("User not authenticated"));
+            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized("User not authenticated");
+            
+            var userId = Guid.Parse(userIdStr);
             try
             {
-                var order = await _orderService.CreateOrderAsync(userId, dto.AddressId, dto.PaymentType, dto.Items);
+                var order = await _orderService.CreateOrderAsync(userId, dto.AddressId, dto.PaymentType, dto.Items, 
+                    dto.RazorpayOrderId, dto.RazorpayPaymentId, dto.RazorpaySignature);
                 return Ok(order);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Order creation failed: {ex.Message}");
-                if (ex.InnerException != null)
-                {
-                    Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
-                }
                 return BadRequest(ex.Message);
             }
         }
@@ -98,7 +98,10 @@ namespace motomart_BE.Controllers
     public class CreateOrderDto
     {
         public Guid AddressId { get; set; }
-        public string PaymentType { get; set; } = "COD";
-        public List<CartItemDto> Items { get; set; } = new List<CartItemDto>();
+        public string PaymentType { get; set; } = string.Empty;
+        public List<CartItemDto> Items { get; set; } = new();
+        public string? RazorpayOrderId { get; set; }
+        public string? RazorpayPaymentId { get; set; }
+        public string? RazorpaySignature { get; set; }
     }
 }

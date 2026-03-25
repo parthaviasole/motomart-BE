@@ -34,6 +34,10 @@ namespace motomart_BE.Data
                 entity.Property(e => e.Status).HasColumnName("status");
                 entity.Property(e => e.PaymentType).HasColumnName("payment_type");
                 entity.Property(e => e.Otp).HasColumnName("otp");
+                entity.Property(e => e.RazorpayOrderId).HasColumnName("razorpay_order_id");
+                entity.Property(e => e.RazorpayPaymentId).HasColumnName("razorpay_payment_id");
+                entity.Property(e => e.RazorpaySignature).HasColumnName("razorpay_signature");
+                entity.Property(e => e.PaymentStatus).HasColumnName("payment_status");
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             });
 

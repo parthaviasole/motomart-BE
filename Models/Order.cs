@@ -33,6 +33,18 @@ namespace motomart_BE.Models
         [Column("otp")]
         public string? Otp { get; set; }
 
+        [Column("razorpay_order_id")]
+        public string? RazorpayOrderId { get; set; }
+
+        [Column("razorpay_payment_id")]
+        public string? RazorpayPaymentId { get; set; }
+
+        [Column("razorpay_signature")]
+        public string? RazorpaySignature { get; set; }
+
+        [Column("payment_status")]
+        public string PaymentStatus { get; set; } = "Pending";
+
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
