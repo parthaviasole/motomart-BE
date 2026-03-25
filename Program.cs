@@ -4,7 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using motomart_BE.Data;
 using motomart_BE.Helpers;
 using motomart_BE.Services;
-using Scalar.AspNetCore;
 using Supabase;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -33,8 +32,8 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
-builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // Dependency Injection
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -80,8 +79,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.Use(async (context, next) =>
