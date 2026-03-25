@@ -74,23 +74,36 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Swagger
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Motomart API V1");
+    c.RoutePrefix = "swagger";
+});
 
+// Security headers
 app.Use(async (context, next) =>
 {
     context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
     await next();
 });
 
+// Exception handling (production)
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/error");
+    app.UseHttpsRedirection();
+}
+
+// CORS
 app.UseCors("AllowFrontend");
+
+// Auth
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Routes
 app.MapControllers();
 
 app.Run();
