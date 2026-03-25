@@ -3,7 +3,13 @@
   "builds": [
     {
       "src": "motomart-BE.csproj",
-      "use": "vercel-dotnet@latest"
+      "use": "@vercel/dotnet"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/api/index"
     }
   ]
 }
