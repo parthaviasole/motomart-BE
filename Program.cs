@@ -8,11 +8,21 @@ using Supabase;
 using System.Text;
 using System.Text.Json.Serialization;
 
+using Polly;
+using System.Net.Sockets;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Entity Framework Core - Npgsql
+// Entity Framework Core - Npgsql with Polly Retry Policy
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), npgsqlOptions =>
+        npgsqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorCodesToAdd: null
+        )
+    )
+);
 
 // Supabase configuration
 
